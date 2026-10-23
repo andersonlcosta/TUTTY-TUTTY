@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TUTTY-IA</title>
+    <style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    background-color: #f0f4f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+
+/* =========================================
+   CONTAINER PRINCIPAL
+   ========================================= */
+
+.chat-container {
+    width: 100%;
+    height: 100%;
+    background: #f8fafc;
+
+    display: flex;
+    flex-direction: column;
+
+    position: relative;
+
+    /* IMPORTANTE:
+       o tamanho do container não depende do conteúdo */
+    min-width: 0;
+    min-height: 0;
+
+    overflow: hidden;
+}
+
+
+/* =========================================
+   1. BARRA SUPERIOR
+   ========================================= */
+
+.chat-header {
+    width: 100%;
+    height: 75px;
+    min-height: 75px;
+    flex-shrink: 0;
+
+    background-color: #0284c7;
+    color: white;
+
+    padding: 12px 18px;
+
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    overflow: hidden;
+}
+
+.avatar {
+    font-size: 26px;
+    flex-shrink: 0;
+}
+
+
+/* =========================================
+   2. BARRA DA SECRETARIA
+   ========================================= */
+
+.status-bar {
+    width: 100%;
+    min-height: 28px;
+    flex-shrink: 0;
+
+    text-align: center;
+    font-size: 12px;
+    padding: 6px;
+
+    background: #009688;
+    color: #ffffff;
+
+    font-weight: bold;
+    letter-spacing: 0.5px;
+
+    opacity: 0.95;
+
+    overflow: hidden;
+}
+
+
+/* =========================================
+   ÁREA DAS MENSAGENS
+   ========================================= */
+
+.chat-messages {
+    width: 100%;
+
+    /*
+       ESSA PARTE É A MAIS IMPORTANTE:
+       ela ocupa o espaço disponível e
+       NÃO aumenta o tamanho do chat.
+    */
+    flex: 1 1 auto;
+
+    min-width: 0;
+    min-height: 0;
+
+    padding: 18px;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    background-color: #f1f5f9;
+}
+
+
+/* =========================================
+   MENSAGENS
+   ========================================= */
+
+.message {
+    padding: 12px 16px;
+
+    border-radius: 18px;
+
+    max-width: 82%;
+    min-width: 0;
+
+    font-size: 14px;
+    line-height: 1.5;
+
+    white-space: pre-wrap;
+
+    /*
+       Impede textos enormes da IA
+       de aumentar a largura da tela.
+    */
+    overflow-wrap: anywhere;
+    word-break: break-word;
+
+    flex-shrink: 0;
+}
+
+
+.user-message {
+    background-color: #0284c7;
+    color: white;
+
+    align-self: flex-end;
+
+    border-bottom-right-radius: 4px;
+}
+
+
+.tutor-message {
+    background-color: white;
+    color: #1e293b;
+
+    align-self: flex-start;
+
+    border-bottom-left-radius: 4px;
+
+    border: 1px solid #e2e8f0;
+}
+
+
+/* =========================================
+   IMAGEM ENVIADA NO CHAT
+   ========================================= */
+
+.chat-img {
+    max-width: 100%;
+    max-height: 180px;
+
+    border-radius: 10px;
+
+    margin-top: 5px;
+
+    display: block;
+
+    object-fit: contain;
+}
+
+
+/* =========================================
+   3. BARRA DE DIGITAÇÃO
+   ========================================= */
+
+.chat-input-area {
+    width: 100%;
+    min-width: 0;
+
+    flex-shrink: 0;
+
+    padding: 12px 14px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    background-color: white;
+
+    border-top: 1px solid #e2e8f0;
+
+    position: relative;
+}
+
+
+/* =========================================
+   CAIXA DO INPUT
+   ========================================= */
+
+.input-wrapper {
+    flex: 1 1 auto;
+
+    min-width: 0;
+    max-width: 100%;
+
+    background-color: #f8fafc;
+
+    border-radius: 24px;
+
+    padding: 2px 16px;
+
+    border: 1px solid #cbd5e1;
+
+    display: flex;
+    align-items: center;
+
+    overflow: hidden;
+}
+
+
+input {
+    width: 100%;
+    min-width: 0;
+
+    border: none;
+
+    padding: 10px 4px;
+
+    font-size: 15px;
+
+    outline: none;
+
+    background: transparent;
+}
+
+
+/* =========================================
+   BOTÕES
+   ========================================= */
+
+.btn-action {
+    background-color: #0284c7;
+    color: white;
+
+    border: none;
+
+    width: 44px;
+    height: 44px;
+
+    min-width: 44px;
+    min-height: 44px;
+
+    border-radius: 50%;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 18px;
+
+    flex-shrink: 0;
+}
+
+
+.btn-file {
+    background: none;
+    color: #64748b;
+
+    border: none;
+
+    font-size: 20px;
+
+    cursor: pointer;
+
+    padding: 4px;
+
+    margin-right: 4px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================
+   INPUT DE ARQUIVO
+   ========================================= */
+
+#inputFile {
+    display: none;
+}
+
+
+/* =========================================
+   PREVIEW DA IMAGEM
+   ========================================= */
+
+.preview-container {
+    display: none;
+
+    position: absolute;
+
+    bottom: 70px;
+    left: 14px;
+
+    background: white;
+
+    padding: 6px;
+
+    border-radius: 8px;
+
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+
+    align-items: center;
+
+    gap: 8px;
+
+    border: 1px solid #cbd5e1;
+
+    z-index: 10;
+
+    max-width: calc(100% - 28px);
+}
+
+
+.preview-img {
+    width: 45px;
+    height: 45px;
+
+    object-fit: cover;
+
+    border-radius: 4px;
+
+    flex-shrink: 0;
+}
+
+
+.btn-remove-preview {
+    background: #ef4444;
+    color: white;
+
+    border: none;
+
+    width: 18px;
+    height: 18px;
+
+    border-radius: 50%;
+
+    font-size: 10px;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================
+   CELULAR
+   ========================================= */
+
+@media (max-width: 599px) {
+
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    body {
+        display: block;
+        padding: 0;
+    }
+
+    .chat-container {
+        width: 100%;
+        max-width: none;
+
+        /* Usa a altura REAL disponível no celular */
+        height: 100dvh;
+        min-height: 0;
+        max-height: 100dvh;
+
+        border-radius: 0;
+        box-shadow: none;
+
+        display: flex;
+        flex-direction: column;
+
+        overflow: hidden;
+    }
+
+    .chat-header {
+        width: 100%;
+        height: 75px;
+        min-height: 75px;
+        flex-shrink: 0;
+    }
+
+    .status-bar {
+        width: 100%;
+        flex-shrink: 0;
+    }
+
+    .chat-messages {
+        width: 100%;
+
+        flex: 1 1 auto;
+
+        min-width: 0;
+        min-height: 0;
+
+        overflow-y: auto;
+        overflow-x: hidden;
+
+        padding: 18px;
+    }
+
+    .message {
+        max-width: 85%;
+        min-width: 0;
+
+        font-size: 14px;
+
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .chat-input-area {
+        width: 100%;
+
+        flex-shrink: 0;
+
+        padding: 10px;
+
+        min-height: 64px;
+    }
+
+    .input-wrapper {
+        min-width: 0;
+        max-width: 100%;
+
+        padding: 2px 12px;
+    }
+
+    input {
+        min-width: 0;
+        font-size: 14px;
+    }
+}
+
+/* =========================================
+   TABLET
+   ========================================= */
+
+@media (min-width: 600px) and (max-width: 899px) {
+
+    body {
+        padding: 20px;
+    }
+
+    .chat-container {
+        /*
+           TAMANHO FIXO DA CAIXA NA TELA
+        */
+        width: 100%;
+        max-width: 800px;
+
+        height: calc(100vh - 40px);
+        max-height: calc(100vh - 40px);
+
+        border-radius: 16px;
+
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .chat-messages {
+        padding: 24px;
+    }
+
+    .message {
+        max-width: 75%;
+    }
+}
+
+
+/* =========================================
+   COMPUTADOR / NOTEBOOK
+   ========================================= */
+
+@media (min-width: 900px) and (max-width: 1399px) {
+
+    body {
+        padding: 30px;
+    }
+
+    .chat-container {
+        /*
+           TAMANHO FIXO
+           O conteúdo NÃO consegue aumentar essa caixa.
+        */
+        width: 100%;
+        max-width: 1000px;
+
+        height: calc(100vh - 60px);
+        max-height: calc(100vh - 60px);
+
+        border-radius: 18px;
+
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .chat-messages {
+        padding: 28px 40px;
+    }
+
+    .message {
+        max-width: 70%;
+        font-size: 15px;
+    }
+}
+
+
+/* =========================================
+   MONITOR GRANDE
+   ========================================= */
+
+@media (min-width: 1400px) {
+
+    body {
+        padding: 30px;
+    }
+
+    .chat-container {
+        /*
+           TAMANHO FIXO
+        */
+        width: 100%;
+        max-width: 1100px;
+
+        height: calc(100vh - 60px);
+        max-height: calc(100vh - 60px);
+
+        border-radius: 18px;
+
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .chat-messages {
+        padding: 28px 60px;
+    }
+
+    .message {
+        max-width: 65%;
+        font-size: 15px;
+    }
+}
+</style>
+</head>
+<body>
+    <!-- ====================================================== -->
+<!--  COMPONENTE DO VLIBRAS CORRIGIDO                    -->
+<!-- ====================================================== -->
+<div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper>
+        <div vw-plugin-top-wrapper></div>
+    </div>
+</div>
+<!-- Script Oficial -->
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+
+    
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="avatar"></div>
+            <div>
+                <div style="font-weight: bold;">TUTTY-IA</div>
+                <div style="font-size: 12px; color: #38bdf8;">Escola Roberto Tonellotti</div>
+            </div>
+        </div>
+
+        <div id="statusBar" class="status-bar">Secretaria da Educação de São Paulo</div>
+
+        <div id="chatMessages" class="chat-messages">
+            <div class="message tutor-message">Olá! Eu sou o TUTTY! Qual desafio vamos resolver juntos hoje? </div>
+        </div>
+
+        <!-- Balão flutuante de preview da foto selecionada -->
+        <div class="preview-container" id="previewContainer">
+            <img class="preview-img" id="previewImg" src="" alt="Preview">
+            <button class="btn-remove-preview" onclick="removerFoto()">✕</button>
+        </div>
+
+        <div class="chat-input-area">
+            <div class="input-wrapper">
+                <!-- Botão Clipe que ativa a câmera e arquivos no Celular -->
+                <button class="btn-file" onclick="document.getElementById('inputFile').click()">📎</button>
+                <input type="file" id="inputFile" accept="image/*" onchange="fotoSelecionada(event)">
+                
+                <input type="text" id="inputMensagem" placeholder="Digite sua pergunta..." onkeypress="if(event.key==='Enter') enviarMensagem()">
+            </div>
+            <button class="btn-action" onclick="enviarMensagem()">➔</button>
+        </div>
+    </div>
+
+    <script>
+        let historicoConversa = [];
+        let imagemBase64Atual = null; // Guarda a foto temporariamente
+
+        const messagesContainer = document.getElementById('chatMessages');
+        const inputField = document.getElementById('inputMensagem');
+        const statusBar = document.getElementById('statusBar');
+        const fileInput = document.getElementById('inputFile');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImg = document.getElementById('previewImg');
+
+        //  Detecta quando o aluno tirou foto ou escolheu arquivo
+        function fotoSelecionada(event) {
+            const arquivo = event.target.files[0];
+            if (!arquivo) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // Remove o cabeçalho 'data:image/...;base64,' para enviar apenas a string limpa para o Python
+                imagemBase64Atual = e.target.result.split(',')[1];
+                
+                // Mostra o balãozinho de preview em cima da barra de digitação
+                previewImg.src = e.target.result;
+                previewContainer.style.display = 'flex';
+            };
+            reader.readAsDataURL(arquivo);
+        }
+
+        // Cancelar o envio da foto antes de mandar a mensagem
+        function removerFoto() {
+            imagemBase64Atual = null;
+            fileInput.value = '';
+            previewContainer.style.display = 'none';
+        }
+
+        function adicionarBalao(texto, classe, imagemBase64 = null) {
+            const balao = document.createElement('div');
+            balao.className = `message ${classe}`;
+            
+            // Se tiver texto, adiciona ao balão
+            if (texto) {
+                balao.textContent = texto;
+            }
+            
+            // Se tiver imagem anexada, renderiza dentro do balão do chat
+            if (imagemBase64) {
+                const img = document.createElement('img');
+                img.src = `data:image/jpeg;base64,${imagemBase64}`;
+                img.className = 'chat-img';
+                balao.appendChild(img);
+            }
+
+            messagesContainer.appendChild(balao);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        async function enviarMensagem() {
+            const texto = inputField.value.trim();
+            
+            // Não deixa enviar se estiver totalmente vazio (sem texto E sem imagem)
+            if (!texto && !imagemBase64Atual) return;
+
+            statusBar.innerText = " O Tutor está pensando...";
+            
+            // Exibe a mensagem do usuário no chat (com a imagem se houver)
+            adicionarBalao(texto, 'user-message', imagemBase64Atual);
+            
+            // Alinha o objeto exatamente ao formato da sua Pydantic `MensagemItem` no Python
+            historicoConversa.push({ 
+                role: "user", 
+                text: texto, 
+                image_base64: imagemBase64Atual 
+            });
+
+            // Limpa os campos da tela imediatamente após enviar
+            inputField.value = '';
+            removerFoto();
+
+            try {
+                const response = await fetch('/perguntar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ historico: historicoConversa })
+                });
+                const data = await response.json();
+                
+                adicionarBalao(data.resposta, 'tutor-message');
+                historicoConversa.push({ role: "model", text: data.resposta });
+            } catch (error) {
+                adicionarBalao("Erro ao falar com o Tutor. Tente novamente.", 'tutor-message');
+            } finally {
+                statusBar.innerText = "Secretaria da Educação de São Paulo";
+            }
+        }
+    </script>
+</body>
+</html>
